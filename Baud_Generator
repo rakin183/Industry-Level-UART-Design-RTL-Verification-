@@ -1,0 +1,28 @@
+module baud_gen(
+    input clk,              // system clock
+    input reset,            // active-high reset
+    input [10:0] dvsr,      // divisor value to set baud rate
+    output tick             // output tick signal
+);
+    reg [10:0] r_reg;       // register to hold current count
+    reg [10:0] r_next;      // next value for the count
+
+    always @(posedge clk or posedge reset) begin
+        if (reset)
+            r_reg <= 0;     // reset counter
+        else
+            r_reg <= r_next; // update counter
+    end
+
+    // counter logic
+    always @* begin
+        if (r_reg == dvsr)
+            r_next = 0;     // reset counter when it reaches divisor
+        else
+            r_next = r_reg + 1; // otherwise increment
+    end
+
+    // generate tick when counter equals 1
+    assign tick = (r_reg == 1);
+
+endmodule
