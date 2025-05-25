@@ -1,0 +1,70 @@
+// Testbench for fifo_tx_uart
+module fifo_tx_uart_tb();
+
+  // Inputs
+  reg clk, reset, wr, rd;
+  reg [7:0] w_data;
+
+  // Outputs
+  wire [7:0] r_data;
+  wire empty, full;
+
+  // Instantiate the DUT (Device Under Test)
+  fifo_tx_uart dut (
+    .clk(clk),
+    .reset(reset),
+    .wr(wr),
+    .rd(rd),
+    .w_data(w_data),
+    .r_data(r_data),
+    .empty(empty),
+    .full(full)
+  );
+
+  // Clock generation: 50% duty cycle
+  always begin
+    clk = 0;
+    #1;
+    clk = 1;
+    #1;
+  end
+
+  // Dump variables for waveform analysis
+  initial begin
+    $dumpfile("dumpfile.vcd"); // VCD output for GTKWave or similar
+    $dumpvars();               // Dump all signals
+  end
+
+  // Test Sequence
+  initial begin
+    // Initialize inputs
+    reset = 1;
+    wr = 0;
+    rd = 0;
+    #10;
+
+    // Release reset
+    reset = 0;
+
+    // Write data into FIFO
+    w_data = 8'd113;  // ASCII for 'q'
+    #100;
+    wr = 1;
+    #10;
+    wr = 0;
+
+    // Read data from FIFO
+    rd = 1;
+    #30;
+    rd = 0;
+
+    // Additional read to test empty state
+    #100;
+    rd = 1;
+
+    // Finish simulation
+    #20;
+    $finish;
+  end
+
+endmodule
