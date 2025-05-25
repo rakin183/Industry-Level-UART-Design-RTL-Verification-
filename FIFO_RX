@@ -1,0 +1,43 @@
+module fifo_rx_uart(
+  input clk,
+  input reset,
+  input wr,               // write enable
+  input rd,               // read enable
+  input [7:0] w_data,     // data to write
+  output reg [7:0] r_data,// data read
+  output reg empty,       // 1 if FIFO is empty
+  output full             // 1 if FIFO is full
+);
+
+  // Internal register for storing data
+  reg [7:0] data_reg;
+  reg       full_reg;
+
+  // Output full is simply the internal full register
+  assign full = full_reg;
+
+  // Sequential logic
+  always @(posedge clk or posedge reset) begin
+    if (reset) begin
+      data_reg <= 8'b0;
+      r_data   <= 8'b0;
+      full_reg <= 1'b0;
+      empty    <= 1'b1;
+    end else begin
+      // Write logic
+      if (wr && !full_reg) begin
+        data_reg <= w_data;
+        full_reg <= 1'b1;
+        empty    <= 1'b0;
+      end
+
+      // Read logic
+      if (rd && !empty) begin
+        r_data   <= data_reg;
+        full_reg <= 1'b0;
+        empty    <= 1'b1;
+      end
+    end
+  end
+
+endmodule
