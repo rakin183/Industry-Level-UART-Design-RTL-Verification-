@@ -1,0 +1,71 @@
+// Testbench for fifo_rx_uart module
+module fifo_rx_uart_tb();
+
+  // Inputs
+  reg clk, reset, wr, rd;
+  reg [7:0] w_data;
+
+  // Outputs
+  wire [7:0] r_data;
+  wire empty, full;
+
+  // Instantiate the FIFO module (Device Under Test)
+  fifo_rx_uart dut (
+    .clk(clk),
+    .reset(reset),
+    .wr(wr),
+    .rd(rd),
+    .w_data(w_data),
+    .r_data(r_data),
+    .empty(empty),
+    .full(full)
+  );
+
+  // Clock generation: toggles every 1 time unit
+  always begin
+    clk = 0;
+    #1;
+    clk = 1;
+    #1;
+  end
+
+  // Generate VCD file for waveform visualization
+  initial begin
+    $dumpfile("dumpfile.vcd");
+    $dumpvars();
+  end
+
+  // Test sequence
+  initial begin
+    // Initialize signals
+    reset = 1;
+    wr = 0;
+    rd = 0;
+    #10;
+
+    // Release reset
+    reset = 0;
+    w_data = 8'd113;   // ASCII for 'q'
+
+    // Write data into FIFO
+    #100;
+    wr = 1;
+    #2;
+    wr = 0;
+
+    // Read data from FIFO after some delay
+    #100;
+    rd = 1;
+    #30;
+    rd = 0;
+
+    // Attempt to read again (to test empty behavior)
+    #100;
+    rd = 1;
+
+    // End simulation
+    #50;
+    $finish;
+  end
+
+endmodule
