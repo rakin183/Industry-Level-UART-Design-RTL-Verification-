@@ -13,10 +13,13 @@ You can find the verilog code & Testbench for each module. The code is organized
 ## State Diagrams
 
 You can find the verilog code & Testbench for each module. The code is organized and documented to facilitate easy understanding
-
+# Transmitter
 <img src="TX.png" />
+# Receiver
 <img src="RX.png" />
+# FIFO1
 <img src="FIFO1.png" />
+# FIFO2
 <img src="FIFO2.png" />
 
 ## Results
