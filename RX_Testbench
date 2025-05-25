@@ -1,1 +1,50 @@
+// Testbench for uart_rx module
+module uart_rx_tb();
+
+  // Testbench signals
+  reg clk, reset, rx, s_tick;
+  wire rx_done_tick;
+  wire [7:0] dout;
+
+  // Instantiate Device Under Test (DUT)
+  uart_rx dut (
+    .clk(clk),
+    .reset(reset),
+    .rx(rx),
+    .s_tick(s_tick),
+    .rx_done_tick(rx_done_tick),
+    .dout(dout)
+  );
+
+  // Clock generation (50% duty cycle)
+  always begin
+    clk = 0;
+    #1;
+    clk = 1;
+    #1;
+  end
+
+  // Baud rate tick generator (s_tick signal)
+  always begin
+    s_tick = 0;
+    #2;
+    s_tick = 1;
+    #1;
+  end
+
+  // VCD file for waveform dumping
+  initial begin
+    $dumpfile("dumpfile.vcd"); // Output waveform file
+    $dumpvars;                 // Dump all variables
+  end
+
+  // Test sequence
+  initial begin
+    reset = 1; // Assert reset
+    #5;
+    reset = 0; // Deassert reset
+
+    // Transmit UART serial bits (start + 8 data bits + stop)
+    rx = 1; #16; // Idle
+    rx = 0; #16; // Start b
 
