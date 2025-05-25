@@ -1,0 +1,41 @@
+// Testbench for baud_gen module
+module baudgen_tb();
+
+  // Testbench signals
+  reg clk, reset;
+  reg [10:0] dsvr;
+  wire tick;
+
+  // Instantiate the Device Under Test (DUT)
+  baud_gen dut (
+    .clk(clk),
+    .reset(reset),
+    .dsvr(dsvr),
+    .tick(tick)
+  );
+
+  // Clock generation: 1 time unit high, 1 time unit low (period = 2 units)
+  always begin
+    clk = 0;
+    #1;
+    clk = 1;
+    #1;
+  end
+
+  // Dumpfile setup for waveform viewing
+  initial begin
+    $dumpfile("dumpfile.vcd");      // VCD output file
+    $dumpvars(0, baudgen_tb);       // Dump all variables in this module
+  end
+
+  // Test sequence
+  initial begin
+    reset = 1;                      // Assert reset
+    dsvr = 10;                      // Set divisor value
+    #10;
+    reset = 0;                      // Deassert reset
+    #100;                           // Run simulation for some time
+    $finish;                        // End simulation
+  end
+
+endmodule
